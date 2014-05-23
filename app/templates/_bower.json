@@ -1,0 +1,19 @@
+{
+  "name": "<%= _.slugify(_.humanize(appName)) %>",
+  "version": "0.0.0",
+  "dependencies": {
+    "angular": "1.2.15",
+    "json3": "~3.2.6",
+    "es5-shim": "~2.1.0"<% if (bootstrap) { %>,
+    "jquery": "~1.11.0",
+    "bootstrap": "~3.0.3"<% } %><% if (ngResource) { %>,
+    "angular-resource": "1.2.15"<% } %><% if (ngCookies) { %>,
+    "angular-cookies": "1.2.15"<% } %><% if (ngSanitize) { %>,
+    "angular-sanitize": "1.2.15"<% } %><% if (ngRoute) { %>,
+    "angular-route": "1.2.15"<% } %>
+  },
+  "devDependencies": {
+    "angular-mocks": "1.2.15",
+    "angular-scenario": "1.2.15"
+  }
+}

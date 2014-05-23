@@ -1,0 +1,24 @@
+{
+  "name": "<%= _.slugify(appName) %>",
+  "version": "0.0.0",
+  "description": "<%= appDescr %>",
+  "keywords": [],
+  <% if(github) {%>
+    "homepage": "<%= githubUrl %>/<%= _.slugify(appName) %>",
+    "bugs": "<%= githubUrl %>/<%= _.slugify(appName) %>/issues",
+    "author": {
+      "name": "<%= realname %>",
+      "email": "<%= email %>",
+      "url": "<%= githubUrl %>"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git://github.com/<%= githubUser %>/<%= _.slugify(appname) %>.git"
+    },
+  <% } %>
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=0.8.0"
+  }
+}
