@@ -1,0 +1,39 @@
+{spawn, fork} = require 'child_process'
+fs = require 'fs'
+path = require 'path'
+wrench = require 'wrench'
+
+# Function to run spawnable cmdline commands
+# If 3 args are provided the last arg is set to be the callback
+# @spawnable string CML Tool to run/command to spawn
+# @args=[] Array(optional) array of arguments to pass to the spawnable command
+# @options Object(optional) hash containing options for the node child_process.spawn command 
+# @cb Function(optional) callback to execute after the spawned process exits
+run = (spawnable, args=[], options, cb) ->
+    if arguments.length is 2
+        options = {}
+    if arguments.length is 3 and typeof options is 'function'
+        cb = options
+        options = {}
+    options.stdio = 'inherit'
+    cmd = spawn spawnable, args, options
+    cmd.on 'data', (data) -> log data
+    cmd.on 'message', (msg) -> log msg
+    cmd.on 'exit', (res) ->
+        if res is 0
+            log 'Ran ' + spawnable + ' ' + args
+            cb() if cb
+        else
+            process.exit(res)
+
+task 'convertFromSrc', 'alias for brunch build', ->
+    run 'brunch', ['b']
+
+<%= appName = _.slugify(_.humanize(appName)) %>
+option '-p', '--platform [DIR]', 'platform to run node-webkit for, i.e directory in node-webkit/, if you used yeoman to download it, opts are osx|linux|win-ia32 & linux-x64'
+task 'start', 'Build out and launch app', ->
+    invoke 'convertFromSrc'
+    files = wrench.readdirSyncRecursive './public'
+    files.unshift appName + '.nw' # Name for the zip command
+    run 'zip', files, ->
+        run "node-webkit/#{dir}/nw", [appName + '.nw'], {uid: 0}

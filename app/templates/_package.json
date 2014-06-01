@@ -16,7 +16,25 @@
       "url": "git://github.com/<%= githubUser %>/<%= _.slugify(appname) %>.git"
     },
   <% } %>
-  "dependencies": {},
+  "dependencies": {
+    "brunch": "~1.7",
+    "wrench": ">= 1.5.8 < 1.6",
+    "github": ">= 0.1.16 < 0.2",
+    "jade": "~0.33",
+    "coffee-script": "~1.6",
+    "javascript-brunch": ">= 1.0 < 1.8",
+    "coffee-script-brunch": ">= 1.0 < 1.8",
+    "css-brunch": ">= 1.0 < 1.8",
+    "less-brunch": ">= 1.0 < 1.8",
+    "stylus-brunch": ">= 1.0 < 1.8",
+    "auto-reload-brunch": ">= 1.0 < 1.8",
+    "uglify-js-brunch": ">= 1.0 < 1.8",
+    "clean-css-brunch": ">= 1.0 < 1.8",
+    "jade-angularjs-brunch": "~0.0.5",
+    "karma": "~0.9.4",
+    "karma-coffee-preprocessor": "~0.0.2",
+    "karma-ng-scenario": "~0.0.2"
+    },
   "devDependencies": {},
   "engines": {
     "node": ">=0.8.0"

@@ -12,7 +12,7 @@ exports.config =
     javascripts:
       joinTo:
         'js/app.js': /^app/
-        'js/vendor.js': /^(bower_components|vendor)/
+        'js/vendor.js': /^(app|bower_components|vendor)/
 
     stylesheets:
       joinTo:
@@ -21,11 +21,6 @@ exports.config =
         before: [
           'app/styles/app.less'
         ]
-
-    templates:
-      joinTo:
-        'js/dontUseMe' : /^app/ # dirty hack for Jade compiling.
-
   plugins:
     jade:
       pretty: yes # Adds pretty-indentation whitespaces to output (false by default)
