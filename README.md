@@ -1,3 +1,15 @@
+Work in progress yeoman generator. Do not use this unless you know what you're doing. 
+This is a yeoman generator written from scratch in coffeescript that uses brunch as a base instead of gulp or grunt. 
+Use this to hack around. 
+```
+coffee -cbw **/*.coffee
+```
+Todo:   
+- Test route splicer.  
+- Subgens for angular.  
+- Cordova options  
+- Cakefile for aliasing running nw & cordova.  
+
 # generator-brunch [![Build Status](https://secure.travis-ci.org/kaustavha/generator-brunch.png?branch=master)](https://travis-ci.org/kaustavha/generator-brunch)
 
 > [Yeoman](http://yeoman.io) generator
