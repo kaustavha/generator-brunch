@@ -3,7 +3,8 @@ html(lang='en')
     head
         link(rel="stylesheet", type="text/css", href="css/app.css")
     body
-    	h1 'Allo, 'Allo!
+        h1 <%= _.slugify(_.humanize(appName)) %>
+        p 'Ello 'Ello
         script(src='js/vendor.js')
         script(src='js/partials.js')
         script(src='js/app.js')
