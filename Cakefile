@@ -3,7 +3,7 @@ util = require 'util'
 fs = require 'fs'
 coffee.register()
 BrunchBase = require './src/base'
-rewrite = require './src/rewrite'
+rewriter = require './src/rewriter'
 
 class GeneratorGenerator
     {spawn} = require 'child_process'
@@ -65,7 +65,7 @@ class GeneratorGenerator
                     args.splicable.push '"' + dependency + '": "' + v + '",'
                     args.splicable.push '<% } %>'
                     @args.splicable = args.splicable
-                rewrite @args
+                rewriter @args
 
     copyAndTranspile: (fileName) ->
         spawn 'coffee', ['-c', '-b', '-w', '-o', './app', fileName]

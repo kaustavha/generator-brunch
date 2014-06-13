@@ -24,7 +24,9 @@
   ],
   "dependencies": {
     "yeoman-generator": "~0.16.0",
+    "coffee-script": "*",
     "chalk": "~0.4.0",
+    "github": "~0.1.8",
     "yosay": "^0.1.0",
     "wrench": "*"
   },
