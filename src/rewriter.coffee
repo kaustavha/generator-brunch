@@ -6,12 +6,14 @@ wrench = require 'wrench'
 # @param {Object} args Mapping with the foll. props
 #   @key file @val {String} file to rewite
 #   @key needle @val {String} line to look for 
-#   @key splicable @val {String} line|s to insert
+#   @key splicable @val {Array} line|s to insert, elements in arr should be strings
 #   @key replace @val {String} Choices are:
 #                        'a' - append
 #                        'p' - prepend
 #                        'r' - replace
 #                        'd' - delete
+# e.g args = {file: 'package.json', needle: '"dependencies"', 
+#             splicable: ["a": "1.0.0", "b": "*"]}
 rewrite = (args) ->
     # js y u no scape reg xs?
     _escapeRegExp = (str) -> str.replace /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&'
@@ -64,7 +66,6 @@ rewrite = (args) ->
 
     args.path = args.path || process.cwd()
     fullPath = path.join args.path, args.file
-    @args = args
     tmpFile = args.file + '.temp' 
     l = new wrench.LineReader fullPath
     while l.hasNextLine()
