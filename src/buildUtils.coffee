@@ -80,6 +80,10 @@ class utils
             @args.splicable.push '<% } %>'
         rewriter @args
 
+    # convenience for injecting bower deps wrapped in an if statement of the same name
+    bowerInjector: (name) ->
+        injectDeps name, 'bower', name
+
     copyAndTranspile: (fileName) ->
         spawn 'coffee', ['-c', '-b', '-w', '-o', './app', fileName]
 
