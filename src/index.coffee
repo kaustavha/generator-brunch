@@ -11,6 +11,9 @@ class BrunchGenerator extends BrunchBase
         @on "end", ->
             @installDependencies() unless @options["skip-install"]
 
+    ###
+    User Choices
+    ###
     askForInfo: ->
         # Have Yeoman greet the user.
         @log yosay("Welcome to the marvelous Brunch generator!")
@@ -43,7 +46,7 @@ class BrunchGenerator extends BrunchBase
         @_ask [
             type: 'checkbox'
             name: 'tools'
-            message: 'Pick any of the following transpilers'
+            message: 'Pick any of the following transpilers (checked by default)'
             choices: [
                 name: 'CoffeeScript'
                 value: 'coffee-script'
@@ -56,6 +59,10 @@ class BrunchGenerator extends BrunchBase
                 name: 'Jade'
                 value: 'jade'
                 checked: true
+            ,
+                name: 'LESS'
+                value: 'less'
+                checked: false
             ]
         ]
 
@@ -83,6 +90,9 @@ class BrunchGenerator extends BrunchBase
             ]
         ]
 
+    ###
+    Actions
+    ###
     brunch: ->
         @_compile '_config.coffee'
         @log yosay('Brunch compiles all your things according to the 

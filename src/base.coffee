@@ -1,4 +1,3 @@
-# Yo man, wassup?
 yeoman = require "yeoman-generator"
 
 class BrunchBase extends yeoman.generators.NamedBase
@@ -6,9 +5,11 @@ class BrunchBase extends yeoman.generators.NamedBase
     yosay = require "yosay"
     chalk = require "chalk"
     wrench = require "wrench"
+    path = require 'path'
     fs = require 'fs'
 
     # Github
+    GithubApi = require 'github'
     proxy = process.env.http_proxy or process.env.HTTP_PROXY or process.env.https_proxy or process.env.HTTPS_PROXY or null
     githubOptions = version: "3.0.0"
     if proxy
@@ -16,7 +17,6 @@ class BrunchBase extends yeoman.generators.NamedBase
       githubOptions.proxy =
         host: proxyUrl.hostname
         port: proxyUrl.port
-    GitHubApi = require "github"
     github = new GitHubApi githubOptions
 
     # Convenience function to run this.prompt, set the yo-rc.json 
@@ -25,17 +25,15 @@ class BrunchBase extends yeoman.generators.NamedBase
     # if prompt.choices exists then the selected choice/s will equal the promptname
     _ask: (prompts=[], codeBlock) =>
         done = @async()
-        _set = (key, val) =>
-            @config.set key, val
         _assign = (prompt, props) =>
             propname = prompt.name
             if prompt.choices
                 for choice in prompt.choices # set this.name for all choices
                     bool = if props[propname].indexOf(choice.name) isnt -1 or props[propname] is choice.name then true else false
                     @[choice.value] = bool
-                    _set choice.value, bool
+                    @config.set choice.value, bool
             @[propname] = props[propname] # set this.prompt.name to the selections in the answers hash
-            _set propname, props[propname]
+            @config.set propname, props[propname]
             return
         @prompt prompts, (props) =>
             prompts.forEach (prompt) =>
@@ -111,14 +109,11 @@ class BrunchBase extends yeoman.generators.NamedBase
             for tpl in templates
                 _copy tpl
 
-
     # More convenience
     _addDotCopyRoot: (tpls, renamer) =>
         _compile tpls, '', '', {renamer: 'add.', processor: 'copy'}
     _removeLodashTemplateRoot: (tpls) =>
         _compile tpls, '', '', {renamer: 'remove_', processor: 'template'}
-    
-
 
     # incomplete
     _generateSrcAndTest: (tpls, src, dest) =>
@@ -142,68 +137,6 @@ class BrunchBase extends yeoman.generators.NamedBase
                 throw new Error(err.message + "\n\nCannot fetch your github profile. Make sure you've typed it correctly.")
             cb JSON.parse(JSON.stringify(res)) if cb?
 
-    # File rewriter
-    # @param {Object} args Mapping with the foll. props
-    #   @key file @val {String} file to rewite
-    #   @key needle @val {String} line to look for 
-    #   @key splicable @val {String} line|s to insert
-    #   @key replace @val {String} Choices are:
-    #                        'a' - append
-    #                        'p' - prepend
-    #                        'r' - replace
-    #                        'd' - delete
-    _rewrite: (args) ->
-        # js y u no scape reg xs?
-        _escapeRegExp = (str) -> str.replace /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&'
-        _rewriteFile = (args) ->
-            re = new RegExp args.splicable.map (line) ->
-                '\s*' + _escapeRegExp line
-            .join '\n'
-
-            if re.test args.haystack
-                return args.haystack
-            
-            lines = args.haystack.split '\n'
-
-            needleIndex = 0
-            lines.forEach (line, i) ->
-                if line.indexOf args.needle isnt -1
-                    needleIndex = i
-                return
-
-            spaces = 0
-            spaceStr = ''
-            while lines[needleIndex].charAt spaces is ' '
-                spaces += 1
-                spaceStr += ' '
-
-            ar = args.replace
-            switch ar
-                when 'd'
-                    index = needleIndex
-                    count = 1
-                when 'r'
-                    index = needleIndex
-                    count = 1
-                when 'a'
-                    index = needleIndex + 1
-                    count = 0
-                when 'p'
-                    index = needleIndex
-                    count = 0
-
-            lines.splice index, count, args.splicable.map((line) ->
-                spaceStr + line
-            ).join '\n'
-
-            lines.join '\n'
-
-        args.path = args.path || process.cwd()
-        fullPath = path.join args.path, args.file
-
-        args.haystack = fs.readFileSync fullPath, 'utf8'
-        body = _rewriteFile args
-
-        fs.writeFileSync fullPath, body
+    
 
 module.exports = BrunchBase
