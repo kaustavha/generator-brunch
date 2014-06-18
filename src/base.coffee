@@ -49,22 +49,20 @@ class BrunchBase extends yeoman.generators.NamedBase
         @appname
     
     # Convenience function for copying templates
-    # passing templates as 'all' will result in all filepaths within being added | replaced with inbuilt directory()
-    # runs the yeoman generator template function
-    # removes _ in template file names
+    # Can also rename files following a scheme
     # @templates String or array of filenames
-    # @src src in generator to copy from, defaults to app/templates
-    # @dest destination, defaults to directory generator is called from
-    # @opts key-value mapping of the following options
+    # @opts {object} OPTIONAL key-value mapping of the following options    
+    #    @src {string} src in generator to copy from, defaults to app/templates
+    #    @dest {dest} destination, defaults to directory generator is called from
     #    @processor string 'template'|'copy' Run the _ engine through the file, or just copy it
-    #    @renamer function|string|number Used to rename filenames that
-    #             have similiar renaming schemes
-    _compile: (templates, src, dest, opts) =>
+    #    @renamer {function|string|number} Used to rename filenames that
+    #             have similiar renaming schemes. 1,2 represent remove_ and add. respectively
+    _compile: (templates, opts) =>
         if dest and !fs.existsSync dest then @mkdir dest
         else if not dest then dest = ''
         if not src then src = ''
-        src = src.toString()
-        dest = dest.toString()
+        src = opts.src.toString()
+        dest = opts.dest.toString()
         _renamer = (tpl, renamer) ->
             if not renamer? then return tpl
             if typeof(renamer) is 'function'
@@ -109,7 +107,7 @@ class BrunchBase extends yeoman.generators.NamedBase
             for tpl in templates
                 _copy tpl
 
-    # More convenience
+    # More convenience for file copying
     _addDotCopyRoot: (tpls, renamer) =>
         _compile tpls, '', '', {renamer: 'add.', processor: 'copy'}
     _removeLodashTemplateRoot: (tpls) =>
