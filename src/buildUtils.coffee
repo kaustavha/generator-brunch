@@ -1,7 +1,7 @@
 Promise = require 'bluebird'
 wrench = require 'wrench'
 {spawn} = require 'child_process'
-exec = Promise.promisify(require('child_process').exec)
+blueSpawn = Promise.promisify(require('child_process').spawn)
 path = require 'path'
 fs = require 'fs'
 
@@ -63,57 +63,50 @@ module.exports = {
         fs.unlinkSync fullPath
         fs.renameSync tmpFile, fullPath
 
-    log: (a) -> console.log a
     # @param dep {string} valid dependency name
     # @param cmd {string} package manager to search in e.g bower | npm
     # @return v {string} latest version of dependency or *
-    getVersion: (dep, cmd) ->
-        console.log 'bbbbbbbbbbbbbbb'
-        return exec("#{cmd} info #{dep} --json").then((res) ->
-            return data = JSON.parse res[0]
-        ).then(@log)
-
-        # versionData = spawn cmd, ['info', dep, '--json']
-        # versionData.on 'end', (d) -> console.log d
-        # versionData.on 'data', (dat) -> console.log 'aaaaaaaaadsafasfafa'
-        # versionData.stdout.on 'data', (data) =>
-        #     console.log 'aaaaaaaaadsafasfafa'
-        #     data = JSON.parse(data[0])
-        #     l = data.versions.length - 1
-        #     v = data.versions[l]
+    getVersion: (dep, cmd, cb) ->
+        blueSpawn cmd, ['info', dep, '--json'], {uid: if cmd is 'npm' then 0 else 1000}
+            .then (res) ->
+                data = JSON.parse res[0]
+                l = data.versions.length - 1
+                v = data.versions[l]
+            .then (res) -> cb res
 
     # Function to inject newest versioned dependencies into bower/npm json files
     # @param deps {Array|string} Dependencies to inject
     # @param type {string} Package managaer e.g bower | npm
     # @param logic {string} var to check for when running _ through the file
     injectDeps: (deps, type, logic) ->
+        @type = type
         switch type
             when 'bower' then fileName = '_bower.json'
             when 'npm' then fileName = '_package.json'
-        _getVerPushDep = (dep, type) =>
-            v = @getVersion dep, type
-            @args.splicable.push '"' + dep + '": "' + v + '",'
+        _getVerPushDep = (dep) =>
+            @getVersion dep, @type, (res) =>
+                v = res
+                @args.splicable.push '"' + dep + '": "' + v + '",'
         @args = {}
         @args.file = './app/templates/'
         @args.file += fileName
         @args.needle = '"dependencies":'
         @args.append = true
         @args.splicable = []
-        if logic?
-            @args.splicable.push "<% if (#{logic}) { %>"
+
+        @args.splicable.push "<% if (#{logic}) { %>" if logic
         if typeof(deps) is 'object' # Array...
-            @type = type
             deps.forEach (dep) =>
-                _getVerPushDep dep, @type
+                _getVerPushDep dep
         else if typeof(deps) is 'string'
-            _getVerPushDep deps, @type
-        if logic?
-            @args.splicable.push '<% } %>'
+            _getVerPushDep deps
+        @args.splicable.push '<% } %>' if logic
+
         @rewriter @args
 
     # convenience for injecting bower deps wrapped in an if statement of the same name
     bowerInjector: (name) ->
-        injectDeps name, 'bower', name
+        @injectDeps name, 'bower', name
 
     copyAndTranspile: (fileName) ->
         spawn 'coffee', ['-c', '-b', '-w', '-o', './app', fileName]

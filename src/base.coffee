@@ -58,11 +58,9 @@ class BrunchBase extends yeoman.generators.NamedBase
     #    @renamer {function|string|number} Used to rename filenames that
     #             have similiar renaming schemes. 1,2 represent remove_ and add. respectively
     _compile: (templates, opts) =>
-        if dest and !fs.existsSync dest then @mkdir dest
-        else if not dest then dest = ''
-        if not src then src = ''
-        src = opts.src.toString()
-        dest = opts.dest.toString()
+        src = if opts and opts.src then opts.src.toString() else ''
+        dest = if opts and opts.dest then opts.dest.toString() else ''
+        if dest isnt '' and !fs.existsSync dest then @mkdir dest
         _renamer = (tpl, renamer) ->
             if not renamer? then return tpl
             if typeof(renamer) is 'function'
@@ -91,7 +89,6 @@ class BrunchBase extends yeoman.generators.NamedBase
                 @copy _src(tpl), _dest(tpl)
             else 
                 @copy _src(tpl), _dest(tpl)
-
 
         if typeof templates is 'string'
             if templates is '*'
@@ -134,7 +131,5 @@ class BrunchBase extends yeoman.generators.NamedBase
             if err
                 throw new Error(err.message + "\n\nCannot fetch your github profile. Make sure you've typed it correctly.")
             cb JSON.parse(JSON.stringify(res)) if cb?
-
-    
 
 module.exports = BrunchBase

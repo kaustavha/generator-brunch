@@ -30,6 +30,7 @@ task 'generate', 'Generate the yeoman generator using the generator generator', 
         'json3'
         'es5-shim'
         ], 'bower'
+    
     UiFrameworks = [
         'foundation'
         'topcoat'
@@ -41,3 +42,5 @@ task 'generate', 'Generate the yeoman generator using the generator generator', 
 
     bu.copyAndTranspile 'base.coffee'
     bu.copyAndTranspile 'index.coffee'
+
+    console.log 'Done building'
