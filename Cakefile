@@ -3,7 +3,7 @@ fs = require 'fs'
 {spawn} = require 'child_process'
 coffee = require 'coffee-script'
 coffee.register()
-bu = require './src/buildUtils'
+bu = require('./src/buildUtils').Utilities
 
 task 'generate', 'Generate the yeoman generator using the generator generator', ->
     bu.injectDeps [
@@ -43,4 +43,4 @@ task 'generate', 'Generate the yeoman generator using the generator generator', 
     bu.copyAndTranspile 'base.coffee'
     bu.copyAndTranspile 'index.coffee'
 
-    console.log 'Done building'
+    console.log 'Done with the sync stuff'
