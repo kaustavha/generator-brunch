@@ -1,12 +1,11 @@
-Promise = require 'bluebird'
-wrench = require 'wrench'
-{spawn} = require 'child_process'
-path = require 'path'
-fs = require 'fs'
+class Utilities    
+    wrench = require 'wrench'
+    {spawn} = require 'child_process'
+    path = require 'path'
+    fs = require 'fs'
 
-class Utilities
     # File rewriter
-    # @param {Object} args Mapping with the foll. props
+    # @param {Object} args - Mapping with the foll. props
     #   @key file @val {String} file to rewite
     #   @key path @val {String} OPTIONAL path of the file, useful to sep. path from name in code
     #   @key needle @val {String} line to look for 
@@ -21,6 +20,7 @@ class Utilities
         a = if args.a or args.append then true else false
         p = if args.p or args.prepend then true else false
         r = if args.r or args.replace then true else false
+        if d and a and p and r is false
         args.path = args.path || process.cwd()
         fullPath = path.join args.path, args.file
         tmpFile = args.file + '.temp'
@@ -69,9 +69,37 @@ class Utilities
             contents += l + ' |/n| '
         console.log 'With contents ' + contents
 
-    # @param dep {string} valid dependency name
-    # @param cmd {string} package manager to search in e.g bower | npm
-    # @return v {string} latest version of dependency or *
+    # function to remove lines from a file
+    # @param {string|array} @lines - line/s to remove from the file, can be word/phrase present in the line
+    # @param {string} filepath - path to the file to rewrite
+    lineRemover: (@lines, filepath) ->
+        filepath = path.normalize filepath
+        tmpFile = filepath + '.temp'
+        l = new wrench.LineReader filepath
+        switch lines.length
+            when 0 then return
+            when 1
+                while l.hasNextLine()
+                    line = l.getNextLine()
+                    if line.indexOf(@lines) is -1
+                        fs.appendFileSync tmpFile, line + '\n'
+            else
+                while l.hasNextLine()
+                    line = l.getNextLine()
+                    @append = true
+                    @lines.forEach (lineToCheckFor) ->
+                        if line.indexOf(lineToCheckFor) isnt -1
+                            @append = false
+                            @lines.splice @lines.indexOf(lineToCheckFor), 1 # minor, probably pointless optimization
+                    if @append then fs.appendFileSync tmpFile, line + '\n'
+        fs.unlinkSync filepath
+        fs.renameSync tmpFile, filepath
+
+    # @param {string} dep - valid dependency name
+    # @param {string} cmd - package manager to search in e.g bower | npm
+    # @param {function} @cb - callback to pass latest version number to
+    # @var {boolean} ret - variable declaration, not an argument
+    # @return {string} v - latest version of dependency or '*'
     getVersion: (dep, cmd, @cb, ret=false) ->
         vd = spawn cmd, ['info', dep, '--json'], {uid: if cmd is 'npm' then 0 else 1000}
         ret = =>
@@ -89,9 +117,9 @@ class Utilities
         vd.stdout.on 'err', (err) -> @cb '*' if not @ret
 
     # Function to inject newest versioned dependencies into bower/npm json files
-    # @param deps {Array|string} Dependencies to inject
-    # @param type {string} Package managaer e.g bower | npm
-    # @param logic {string} var to check for when running _ through the file
+    # @param {Array|string} deps - Dependencies to inject
+    # @param {string} type - Package managaer e.g bower | npm
+    # @param {string} logic - var to check for when running _ through the file
     injectDeps: (deps, @type, logic) ->
         switch @type
             when 'bower' then fileName = '_bower.json'
