@@ -105,7 +105,7 @@ class BrunchBase extends yeoman.generators.NamedBase
                 _copy tpl
 
     # More convenience for file copying
-    _addDotCopyRoot: (tpls, renamer) =>
+    _addDotCopyRoot: (tpls) =>
         _compile tpls, '', '', {renamer: 'add.', processor: 'copy'}
     _removeLodashTemplateRoot: (tpls) =>
         _compile tpls, '', '', {renamer: 'remove_', processor: 'template'}
