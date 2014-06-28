@@ -163,6 +163,32 @@ class Utilities
     bowerInjector: (name) ->
         @injectDeps name, 'bower', name
 
+    # Takes a path to a JSON file for npm/bower
+    # Updates all the dependencies in it
+    JSONhandler: (filename, @type) ->
+        file = fs.readFileSync filename
+        @json = JSON.parse file
+        deps = json.dependencies
+        @newDeps = {}
+        @end = (@dep) =>
+            @getVersion @dep, @type, (v) =>
+                @newDeps[@dep] = v
+                @json.dependencies = {}
+                @json.dependencies = @newDeps
+                fs.writeFileSync filename + '.tmp', @json
+                fs.unlinkSync fileName
+                fs.renameSync filename + '.tmp', filename
+        recurser = (deps) =>
+            if deps.length is 1
+                @end arr[0]
+            else
+                @dep = @deps.pop()
+                @getVersion @dep, @type, (v) =>
+                    @newDeps[@dep] = v
+
+        deps = deps.keys()
+        recurser deps
+
     # coffeescript files in cwd to js in ./app
     copyAndTranspile: (fileName) ->
         spawn 'coffee', ['-c', '-b', '-w', '-o', './app', fileName]
