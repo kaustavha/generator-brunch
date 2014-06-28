@@ -1,4 +1,4 @@
-class Utilities    
+class Utilities
     wrench = require 'wrench'
     {spawn} = require 'child_process'
     path = require 'path'
@@ -137,15 +137,25 @@ class Utilities
                 console.log 'Calling rewriter'
                 @rewriter @args
 
+        recurser = (@arr) =>
+            if @arr.length is 1
+                @end arr[0]
+            else
+                dep = @arr.pop()
+                @getVersion dep, @type, (v) =>
+                    @args.splicable.push '"' + dep + '": "' + v + '",'
+                    recurser @arr
+
         @args.splicable.push "<% if (#{logic}) { %>" if logic
         if typeof(deps) is 'object' # Array...
-            l = deps.length
-            deps.forEach (dep) =>
-                if dep is deps[l-1]
-                    @end dep
-                else
-                    @getVersion dep, @type, (v) =>
-                        @args.splicable.push '"' + dep + '": "' + v + '",'
+            recurser deps
+            # l = deps.length
+            # deps.forEach (dep) =>
+            #     if dep is deps[l-1]
+            #         @end dep
+            #     else
+            #         @getVersion dep, @type, (v) =>
+            #             @args.splicable.push '"' + dep + '": "' + v + '",'
         else if typeof(deps) is 'string'
             @end deps
 
@@ -153,6 +163,7 @@ class Utilities
     bowerInjector: (name) ->
         @injectDeps name, 'bower', name
 
+    # coffeescript files in cwd to js in ./app
     copyAndTranspile: (fileName) ->
         spawn 'coffee', ['-c', '-b', '-w', '-o', './app', fileName]
 
