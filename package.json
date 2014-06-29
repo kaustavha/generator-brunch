@@ -17,10 +17,26 @@
     "test": "mocha"
   },
   "files": [
-    "app"
+    "app",
+    "src",
+    "templates"
   ],
   "keywords": [
+    "brunch"
     "yeoman-generator"
+    "scaffold",
+    "framework",
+    "component",
+    "front-end",
+    "web-app",
+    "coffee-script",
+    "bootstrap",
+    "foundation",
+    "topcoat",
+    "pure",
+    "stylus",
+    "jade",
+    "less"
   ],
   "dependencies": {
     "yeoman-generator": "~0.16.0",
