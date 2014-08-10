@@ -1,0 +1,8 @@
+"name": "<%= _.slugify(appName) %>"
+"version": "0.0.0"
+"description": "<%= appDescr %>"
+"licence": "MIT"
+"repository": "<%= ghUser %>/<%= _.slugify(appName) %>"
+"dependencies": {}
+"devDependencies": {}
+"peerDependencies": {}
