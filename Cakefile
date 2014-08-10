@@ -19,6 +19,8 @@ transpilers = [
     'coffee-script'
     'sass'
     'less'
+    'stylus'
+    'clojure-script'
 ]
 transpilers.forEach (t) ->
     nodeModules.push t + '-brunch'
@@ -44,7 +46,7 @@ task 'generate', 'Generate the yeoman generator using the generator generator', 
     .then ->
         bu.fromCSON 'package', 'src', 'app/templates', '_package'
     .then ->
-        bu.dependencyInjector nodeModules, 'npm'
+        bu.dependencyInjector nodeModules, 'npm', 'devDependencies'
 
     bu.copyAndTranspile 'base.coffee'
     bu.copyAndTranspile 'index.coffee'

@@ -139,14 +139,17 @@ class Utilities
         deffered.promise
 
     # Sets defaults for the args object meant for the file rewriter function
-    argsDefaultsSetter: (type, path) =>
-        switch type
+    argsDefaultsSetter: =>
+        switch @type
             when 'bower' then fileName = '_bower.json'
             when 'npm' then fileName = '_package.json'
         @args = {}
-        @args.file = path || './app/templates/'
+        @args.file = @path || './app/templates/'
         @args.file += fileName
-        @args.needle = '"dependencies":'
+        if @dependencyType
+            @args.needle = '"' + @dependencyType + '":'
+        else
+            @args.needle = '"dependencies":'
         @args.append = true
         @args.splicable = []
         @args
@@ -158,9 +161,9 @@ class Utilities
     # @param {string} type - Package managaer e.g bower | npm
     # @param {string} OPTIONAL logic - Variable to check for when running _ through the file
     # @param {string} OPTIONAL path - Filepath
-    dependencyInjector: (deps, @type, logic, path) ->
+    dependencyInjector: (deps, @type, @dependencyType, @path) ->
         deffered = Q.defer()
-        @argsDefaultsSetter @type, path
+        @argsDefaultsSetter()
         @end = (dep) =>
             @getVersion dep, @type
             .then (v) =>
@@ -180,7 +183,7 @@ class Utilities
                     @args.splicable.push '"' + dep + '": "' + v + '",'                    
                     recurser @arr
 
-        @args.splicable.push "<% if (#{logic}) { %>" if logic
+        @args.splicable.push "<% if (#{@logic}) { %>" if @logic
         if typeof(deps) is 'object' # Array...
             recurser deps
         else if typeof(deps) is 'string'
@@ -189,9 +192,9 @@ class Utilities
         deffered.promise
 
     # if no condition, use dep name as condition
-    conditionalDependencyInjector: (deps, @type, @condition, path) ->
+    conditionalDependencyInjector: (deps, @type, @dependencyType, @path, @condition) ->
         deffered = Q.defer()
-        @argsDefaultsSetter @type, path
+        @argsDefaultsSetter
         recurser = (@arr) =>
             if @arr.length is 0
                 @rewriter @args
