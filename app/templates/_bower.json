@@ -1,0 +1,24 @@
+{
+  "name": "<%= _.slugify(appName) %>",
+  "dependencies": {
+    "es5-shim": "4.0.1",
+    "json3": "3.3.2",
+    "modernizr": "2.8.3",
+    "jquery": "2.1.1",
+    <% if (bootstrap) { %>
+    "bootstrap": "3.2.0",
+    <% } %>
+    <% if (pure) { %>
+    "pure": "0.5.0",
+    <% } %>
+    <% if (topcoat) { %>
+    "topcoat": "0.8.0",
+    <% } %>
+    <% if (foundation) { %>
+    "foundation": "5.3.3",
+    <% } %>
+    "angular": "~1.2",
+    "angular-resource": "~1.2.0",
+    "angular-route": "~1.2.0"
+  }
+}
