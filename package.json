@@ -22,8 +22,8 @@
     "templates"
   ],
   "keywords": [
-    "brunch"
-    "yeoman-generator"
+    "brunch",
+    "yeoman-generator",
     "scaffold",
     "framework",
     "component",
@@ -44,7 +44,8 @@
     "chalk": "~0.4.0",
     "github": "~0.1.8",
     "yosay": "^0.1.0",
-    "wrench": "*"
+    "wrench": "~1.5.8",
+    "q": "~1.0.1"
   },
   "devDependencies": {
     "mocha": "*"
