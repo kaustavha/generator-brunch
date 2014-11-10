@@ -5,6 +5,8 @@ coffee = require 'coffee-script'
 Q = require 'q'
 coffee.register()
 bu = require './src/buildUtils'
+
+# NPM deps
 nodeModules = [
     'brunch'
     'javascript-brunch'
@@ -13,6 +15,7 @@ nodeModules = [
     'clean-css-brunch'
     ]
 
+# Create brunch dependencies list
 transpilers = [
     'jade'
     'stylus'
@@ -25,6 +28,7 @@ transpilers = [
 transpilers.forEach (t) ->
     nodeModules.push t + '-brunch'
 
+# Bower deps
 UiFrameworks = [
     'foundation'
     'topcoat'
